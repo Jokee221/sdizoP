@@ -1243,7 +1243,7 @@ int main()
 							while (!naPoczatek)
 							{
 								cout << "Graf " << endl << "Wierzcholki: " << graf->getWierzcholki() << endl << "Krawedzie: " << graf->getKrawedzie() << endl
-									<< "1. Wyswietl" << endl << "2. DFS - macierz incydencji " << endl << "3. DFS - listy sasiedztwa" << endl << "4. Dijkstra - macierz incydencji" << endl << "5. Dijkstra - listy sasiedztwa" << endl << "6. Prim - macierz incydencji " << endl << "7. Prim - listy sasiedztwa" << endl << "8. Wroc do tworzenia grafu" << endl;
+									<< "1. Wyswietl" << endl << "2. DFS - macierz incydencji " << endl << "3. DFS - listy sasiedztwa" << endl << "4. Dijkstra - macierz incydencji" << endl << "5. Dijkstra - listy sasiedztwa" << endl << "6. Kruskal - macierz incydencji " << endl << "7. Kruskal - listy sasiedztwa" << endl << "8. Wroc do tworzenia grafu" << endl << "9. Prim - macierz incydencji" << endl << "10. Prim - listy sasiedztwa" << endl;
 								cin >> wybor;
 								switch (wybor)
 								{
@@ -1304,14 +1304,25 @@ int main()
 								}break;
 								case 6: {
 									graf->kruskalMacierz();
+
 								}break;
 								case 7: {
-									graf->kruskalMacierz();
+									graf->kruskalLista();
+
 								}break;
 								case 8: {
 									delete graf;
 									system("cls");
 									naPoczatek = true;
+
+								}break;
+								case 9: {
+									graf->primMacierz();
+
+								}break;
+								case 10: {
+									graf->primLista();
+
 								}break;
 								}
 							}
@@ -1358,7 +1369,7 @@ int main()
 			{
 
 				cout << "Graf " << endl << "Wierzcholki: " << graf->getWierzcholki() << endl << "Krawedzie: " << graf->getKrawedzie() << endl << "Gestosc: " << g << endl
-					<< "1. Wyswietl" << endl << "2. DFS - macierz incydencji " << endl << "3. DFS - listy sasiedztwa" << endl << "4. Dijkstra - macierz incydencji" << endl << "5. Dijkstra - listy sasiedztwa" << endl << "6. Prim - macierz incydencji" << endl << "7. Prim - listy sasiedztwa" << endl << "8. Wroc do tworzenia grafu" << endl;
+					<< "1. Wyswietl" << endl << "2. DFS - macierz incydencji " << endl << "3. DFS - listy sasiedztwa" << endl << "4. Dijkstra - macierz incydencji" << endl << "5. Dijkstra - listy sasiedztwa" << endl << "6. Kruskal - macierz incydencji" << endl << "7. Kruskal - listy sasiedztwa" << endl << "8. Wroc do tworzenia grafu" << endl << "9. Prim - macierz incydencji" << endl << "10. Prim - listy sasiedztwa" << endl;
 				cin >> wybor;
 				switch (wybor)
 				{
@@ -1422,13 +1433,22 @@ int main()
 
 				}break;
 				case 7: {
-					graf->primLista();
+					graf->kruskalLista();
 
 				}break;
 				case 8: {
 					delete graf;
 					system("cls");
 					naPoczatek = true;
+
+				}break;
+				case 9: {
+					graf->primMacierz();
+
+				}break;
+				case 10: {
+					graf->primLista();
+
 				}break;
 				}
 			}
