@@ -32,7 +32,7 @@ void pobierzCzas()
 	LARGE_INTEGER li;
 	QueryPerformanceCounter(&li);
 	cout << endl;
-	cout << "Operacja zajela: " << (li.QuadPart - licznik) / PCFreq << " milisekund" << endl;
+	cout << "Czas trwania algorytmu wynosi: " << (li.QuadPart - licznik) / PCFreq << " ms" << endl;
 	licznik = 0;
 }
 class Krawedz
@@ -463,122 +463,8 @@ public:
 
 		else return false;
 	}
-	void DFSMacierz(int w)
-	{
-		int i, j;
-		Stos stos;
-		odwiedzone = new bool[wierzcholki];
-		for (i = 0; i < wierzcholki; i++)
-		{
-			odwiedzone[i] = false;
-		}
-		cout << "Graf nieskierowany na podstawie ktorego budowano drzewo: " << endl << endl;
-		cout << "   ";
-		for (i = 0; i < krawedzieOdwrotne; i++)
-		{
-			cout << setw(3) << i;
-
-		}
-
-		cout << endl << endl;
-		for (i = 0; i < wierzcholki; i++)
-		{
-			cout << setw(3) << i;
-			for (int j = 0; j < krawedzieOdwrotne; j++)
-				cout << setw(3) << grafNieskierowanyM[i][j];
-			cout << endl;
-		}
-		cout << endl;
-		cout << "   ";
-		for (i = 0; i < krawedzieOdwrotne; i++)
-		{
-			cout << setw(3) << KO[i].waga;
-		}
-		cout << " " << "<- wagi";
-		cout << endl << endl;
-		cout << "Odwiedzone wierzcholki:" << endl << endl;
-		czasStart();
-		stos.push(w);
-		while (!stos.empty())
-		{
-
-			w = stos.top();  stos.pop();
-
-			if (!odwiedzone[w])
-			{
-				odwiedzone[w] = true;
-				for (i = krawedzie - 1; i >= 0; i--)
-				{
-					if (grafNieskierowanyM[w][i] != 0)
-						for (j = 0; j < wierzcholki; j++)
-							if (j != w && grafNieskierowanyM[j][i] != 0)
-							{
-								if (!odwiedzone[j])
-								{
-									stos.push(j);
-								}
-							}
-
-				}
-				cout << " -> " << w;
-			}
-		}
-		pobierzCzas();
-		delete[]odwiedzone;
-		stos.~Stos();
-	}
-	void DFSLista(int w)
-	{
-		Stos stos;
-		int u, i;
-
-		odwiedzone = new bool[wierzcholki];
-		for (i = 0; i < wierzcholki; i++)
-		{
-			odwiedzone[i] = false;
-		}
-		cout << endl << "Graf nieskierowany na podstawie ktorego wykonano DFS: " << endl << endl;
-		for (i = 0; i < wierzcholki; i++)
-		{
-			cout << "LS[" << i << "] =";
-			e1 = grafNieskierowanyL[i];
-			while (e1)
-			{
-				cout << setw(3) << e1->w << "(" << e1->waga << ") ";
-				e1 = e1->nastepny;
-			}
-			cout << endl;
-		}
-		cout << endl << endl;
-		cout << "Odwiedzone wierzcholki:" << endl << endl;
-		czasStart();
-		stos.push(w);
-
-		while (!stos.empty())
-		{
-			w = stos.top();
-			stos.pop();
-
-			if (!odwiedzone[w])
-			{
-				odwiedzone[w] = true;
-				for (e1 = grafNieskierowanyL[w]; e1; e1 = e1->nastepny)
-				{
-					u = e1->w;
-					if (!odwiedzone[u])
-					{
-						stos.push(u);
-					}
-				}
-				cout << " -> " << w;
-			}
-
-		}
-		pobierzCzas();
-		delete[]odwiedzone;
-		stos.~Stos();
-	}
-	void DijkstraLista(int w)
+	
+	void DijkstraLista(int w, int t)
 	{
 		int korzen, wezel, rozmiarKopca, ojciec, lewySyn, prawySyn, kosztMin, synMin, syn, *koszta, *poprzednicy, *kopiec, *pozycjaKopiec;
 		Stos stos;
@@ -588,6 +474,25 @@ public:
 		odwiedzone = new bool[wierzcholki];
 		kopiec = new int[wierzcholki];
 		pozycjaKopiec = new int[wierzcholki];
+
+		odwiedzone = new bool[wierzcholki];
+		for (i = 0; i < wierzcholki; i++)
+		{
+			odwiedzone[i] = false;
+		}
+		cout << endl << "Graf skierowany poczatkowy: " << endl << endl;
+		for (i = 0; i < wierzcholki; i++)
+		{
+			cout << "LS[" << i << "] =";
+			e1 = listySasiedztwa[i];
+			while (e1)
+			{
+				cout << setw(3) << e1->w << "(" << e1->waga << ") ";
+				e1 = e1->nastepny;
+			}
+			cout << endl;
+		}
+		cout << endl;
 
 		for (i = 0; i < wierzcholki; i++)
 		{
@@ -659,16 +564,20 @@ public:
 		pobierzCzas();
 		cout << endl;
 
-		cout << "Najkrotsza droga z wierzcholka nr " << w << " do wierzcholka nr: " << endl << endl;
+		cout << "Najkrotsza droga z wierzcholka nr " << w << " do wierzcholka nr: " << t << endl;
+		string displayText = "";
+		string temp = "";
+		int minCost = MAXINT;
+
 		for (i = 0; i < wierzcholki; i++)
 		{
 			szerokosc = -2;
-
-			cout << i << ": ";
-
-
-			if (koszta[i] == MAXINT || koszta[i]<0)
+						
+			if (koszta[t] == MAXINT || koszta[t] < 0)
+			{
 				cout << "Brak sciezki" << endl;
+				break;
+			}
 			else
 
 			{
@@ -678,19 +587,29 @@ public:
 					szerokosc = szerokosc + 2;
 				}
 
+				int koncowyWierzcholek;
 				while (!stos.empty())
 				{
-					cout << stos.top() << " ";
+					koncowyWierzcholek = stos.top();
+					temp += to_string(stos.top()) + " ";
 					stos.pop();
 				}
-				for (j = 0; j < wierzcholki - szerokosc; j++)
-					cout << " ";
-				cout << setw(5) << "(" << koszta[i] << ")" << endl;
+				//for (j = 0; j < wierzcholki - szerokosc; j++)
+					temp += " waga sciezki";
+				temp += "(" + to_string(koszta[i]);
+				temp += ")";
+
+				if (koncowyWierzcholek == t) {
+					displayText = temp;
+				}
+				temp = "";
 			}
 		}
+
+		cout << displayText;
 		cout << endl << endl;
 	}
-	void DijkstraMacierz(int w)
+	void DijkstraMacierz(int w, int t)
 	{
 		int korzen, wezel, rozmiarKopca, ojciec, lewySyn, prawySyn, kosztMin, synMin, syn, *koszta, *poprzednicy, *kopiec, *pozycjaKopiec;
 		Stos stos;
@@ -700,6 +619,36 @@ public:
 		odwiedzone = new bool[wierzcholki];
 		kopiec = new int[wierzcholki];
 		pozycjaKopiec = new int[wierzcholki];
+
+		odwiedzone = new bool[wierzcholki];
+		for (i = 0; i < wierzcholki; i++)
+		{
+			odwiedzone[i] = false;
+		}
+
+		cout << "Graf skierowany poczatkowy: " << endl << endl;
+		cout << "   ";
+		for (i = 0; i < krawedzieOdwrotne; i++)
+		{
+			cout << setw(3) << i;
+
+		}
+		cout << endl << endl;
+		for (i = 0; i < wierzcholki; i++)
+		{
+			cout << setw(3) << i;
+			for (int j = 0; j < krawedzieOdwrotne; j++)
+				cout << setw(3) << macierzIncydencji[i][j];
+			cout << endl;
+		}
+		cout << endl;
+		cout << "   ";
+		for (i = 0; i < krawedzieOdwrotne; i++)
+		{
+			cout << setw(3) << KO[i].waga;
+		}
+		cout << " " << "<- wagi";
+		cout << endl;
 
 		for (i = 0; i < wierzcholki; i++)
 		{
@@ -776,15 +725,16 @@ public:
 		pobierzCzas();
 		cout << endl;
 
-		cout << "Najkrotsza droga z wierzcholka nr " << w << " do wierzcholka nr: " << endl << endl;
+		cout << "Najkrotsza droga z wierzcholka nr " << w << " do wierzcholka nr: " << t << endl;
+		string displayText = "";
+		string temp = "";
+		int minCost = MAXINT;
+
 		for (i = 0; i < wierzcholki; i++)
 		{
 			szerokosc = -2;
 
-			cout << i << ": ";
-
-
-			if (koszta[i] == MAXINT || koszta[i]<0)
+			if (koszta[t] == MAXINT || koszta[t]<0)
 				cout << "Brak sciezki" << endl;
 			else
 
@@ -795,18 +745,332 @@ public:
 					szerokosc = szerokosc + 2;
 				}
 
+				int koncowyWierzcholek;
 				while (!stos.empty())
 				{
-					cout << stos.top() << " ";
+					koncowyWierzcholek = stos.top();
+					temp += to_string(stos.top()) + " ";
+					stos.pop();
+				}
+				//for (j = 0; j < wierzcholki - szerokosc; j++)
+					temp += " waga sciezki";
+				temp += "(" + to_string(koszta[i]);
+				temp += ")";
+
+				if (koncowyWierzcholek == t) {
+					displayText = temp;
+				}
+				temp = "";
+			}
+		}
+
+		cout << displayText;
+		cout << endl << endl;
+	}
+
+	void FordaBellmanaLista(int w, int t)
+	{
+		int korzen, wezel, rozmiarKopca, ojciec, lewySyn, prawySyn, kosztMin, synMin, syn, *koszta, *poprzednicy, *kopiec, *pozycjaKopiec;
+		Stos stos;
+		int szerokosc, i, j;
+		koszta = new int[wierzcholki];
+		poprzednicy = new int[wierzcholki];
+		odwiedzone = new bool[wierzcholki];
+		kopiec = new int[wierzcholki];
+		pozycjaKopiec = new int[wierzcholki];
+
+		odwiedzone = new bool[wierzcholki];
+		//for (i = 0; i < wierzcholki; i++)
+		//{
+		//	odwiedzone[i] = false;
+		//}
+		cout << endl << "Graf skierowany poczatkowy: " << endl << endl;
+		for (i = 0; i < wierzcholki; i++)
+		{
+			cout << "LS[" << i << "] =";
+			e1 = listySasiedztwa[i];
+			while (e1)
+			{
+				cout << setw(3) << e1->w << "(" << e1->waga << ") ";
+				e1 = e1->nastepny;
+			}
+			cout << endl;
+		}
+		cout << endl;
+
+		for (i = 0; i < wierzcholki; i++)
+		{
+			koszta[i] = MAXINT;
+			poprzednicy[i] = -1;
+			odwiedzone[i] = false;
+			kopiec[i] = pozycjaKopiec[i] = i;
+		}
+		czasStart();
+		for (int k = 1; k < 60; k++) {
+			rozmiarKopca = wierzcholki;
+
+			koszta[w] = 0;
+			wezel = kopiec[0];
+			kopiec[0] = kopiec[w];
+			kopiec[w] = wezel;
+			pozycjaKopiec[w] = 0;
+			pozycjaKopiec[0] = w;
+
+			for (i = 0; i < wierzcholki; i++)
+			{
+				korzen = kopiec[0];
+
+				kopiec[0] = kopiec[--rozmiarKopca];
+				pozycjaKopiec[kopiec[0]] = ojciec = 0;
+				while (true)
+				{
+					lewySyn = ojciec + ojciec + 1;
+					prawySyn = lewySyn + 1;
+					if (lewySyn >= rozmiarKopca) break;
+					kosztMin = koszta[kopiec[lewySyn]];
+					synMin = lewySyn;
+					if ((prawySyn < rozmiarKopca) && (kosztMin > koszta[kopiec[prawySyn]]))
+					{
+						kosztMin = koszta[kopiec[prawySyn]];
+						synMin = prawySyn;
+					}
+					if (koszta[kopiec[ojciec]] <= kosztMin)
+						break;
+					wezel = kopiec[ojciec];
+					kopiec[ojciec] = kopiec[synMin];
+					kopiec[synMin] = wezel;
+					pozycjaKopiec[kopiec[ojciec]] = ojciec;
+					pozycjaKopiec[kopiec[synMin]] = synMin;
+					ojciec = synMin;
+				}
+
+				odwiedzone[korzen] = true;
+
+				if (listySasiedztwa[korzen] != NULL)
+					for (e1 = listySasiedztwa[korzen]; e1; e1 = e1->nastepny)
+						if (!odwiedzone[e1->w] && (koszta[e1->w] > koszta[korzen] + e1->waga))
+						{
+							koszta[e1->w] = koszta[korzen] + e1->waga;
+							poprzednicy[e1->w] = korzen;
+
+							for (syn = pozycjaKopiec[e1->w]; syn; syn = ojciec)
+							{
+								ojciec = syn / 2;
+								if (koszta[kopiec[ojciec]] <= koszta[kopiec[syn]])
+									break;
+								wezel = kopiec[ojciec];
+								kopiec[ojciec] = kopiec[syn];
+								kopiec[syn] = wezel;
+								pozycjaKopiec[kopiec[ojciec]] = ojciec;
+								pozycjaKopiec[kopiec[syn]] = syn;
+							}
+						}
+			}
+		}
+		pobierzCzas();
+		cout << endl;
+
+		cout << "Najkrotsza droga z wierzcholka nr " << w << " do wierzcholka nr: " << t << endl;
+		string displayText = "";
+		string temp = "";
+		int minCost = MAXINT;
+
+		for (i = 0; i < wierzcholki; i++)
+		{
+			szerokosc = -2;
+
+			if (koszta[t] == MAXINT || koszta[t]<0)
+				cout << "Brak sciezki" << endl;
+			else
+
+			{
+				for (j = i; j > -1; j = poprzednicy[j])
+				{
+					stos.push(j);
+					szerokosc = szerokosc + 2;
+				}
+
+				int koncowyWierzcholek;
+				while (!stos.empty())
+				{
+					koncowyWierzcholek = stos.top();
+					temp += to_string(stos.top()) + " ";
 					stos.pop();
 				}
 				for (j = 0; j < wierzcholki - szerokosc; j++)
-					cout << " ";
-				cout << setw(5) << "(" << koszta[i] << ")" << endl;
+					temp += " waga sciezki";
+				temp += "(" + to_string(koszta[i]);
+				temp += ")";
+
+				if (koncowyWierzcholek == t) {
+					displayText = temp;
+				}
+				temp = "";
 			}
 		}
+
+		cout << displayText;
 		cout << endl << endl;
 	}
+	void FordaBellmanaMacierz(int w, int t)
+	{
+		int korzen, wezel, rozmiarKopca, ojciec, lewySyn, prawySyn, kosztMin, synMin, syn, *koszta, *poprzednicy, *kopiec, *pozycjaKopiec;
+		Stos stos;
+		int szerokosc, i, j, l;
+		koszta = new int[wierzcholki];
+		poprzednicy = new int[wierzcholki];
+		odwiedzone = new bool[wierzcholki];
+		kopiec = new int[wierzcholki];
+		pozycjaKopiec = new int[wierzcholki];
+
+		odwiedzone = new bool[wierzcholki];
+		for (i = 0; i < wierzcholki; i++)
+		{
+			odwiedzone[i] = false;
+		}
+
+		cout << "Graf skierowany poczatkowy: " << endl << endl;
+		cout << "   ";
+		for (i = 0; i < krawedzieOdwrotne; i++)
+		{
+			cout << setw(3) << i;
+
+		}
+		cout << endl << endl;
+		for (i = 0; i < wierzcholki; i++)
+		{
+			cout << setw(3) << i;
+			for (int j = 0; j < krawedzieOdwrotne; j++)
+				cout << setw(3) << macierzIncydencji[i][j];
+			cout << endl;
+		}
+		cout << endl;
+		cout << "   ";
+		for (i = 0; i < krawedzieOdwrotne; i++)
+		{
+			cout << setw(3) << KO[i].waga;
+		}
+		cout << " " << "<- wagi";
+		cout << endl;
+
+		for (i = 0; i < wierzcholki; i++)
+		{
+			koszta[i] = MAXINT;
+			poprzednicy[i] = -1;
+			odwiedzone[i] = false;
+			kopiec[i] = pozycjaKopiec[i] = i;
+		}
+
+
+		czasStart();
+		rozmiarKopca = wierzcholki;
+
+		koszta[w] = 0;
+		wezel = kopiec[0];
+		kopiec[0] = kopiec[w];
+		kopiec[w] = wezel;
+		pozycjaKopiec[w] = 0;
+		pozycjaKopiec[0] = w;
+
+		for (i = 0; i < wierzcholki; i++)
+		{
+			korzen = kopiec[0];
+
+			kopiec[0] = kopiec[--rozmiarKopca];
+			pozycjaKopiec[kopiec[0]] = ojciec = 0;
+			while (true)
+			{
+				lewySyn = ojciec + ojciec + 1;
+				prawySyn = lewySyn + 1;
+				if (lewySyn >= rozmiarKopca) break;
+				kosztMin = koszta[kopiec[lewySyn]];
+				synMin = lewySyn;
+				if ((prawySyn < rozmiarKopca) && (kosztMin > koszta[kopiec[prawySyn]]))
+				{
+					kosztMin = koszta[kopiec[prawySyn]];
+					synMin = prawySyn;
+				}
+				if (koszta[kopiec[ojciec]] <= kosztMin)
+					break;
+				wezel = kopiec[ojciec];
+				kopiec[ojciec] = kopiec[synMin];
+				kopiec[synMin] = wezel;
+				pozycjaKopiec[kopiec[ojciec]] = ojciec;
+				pozycjaKopiec[kopiec[synMin]] = synMin;
+				ojciec = synMin;
+			}
+
+			odwiedzone[korzen] = true;
+
+			for (l = 0; l < krawedzie; l++)
+			{
+				if (macierzIncydencji[korzen][l] != 0)
+					for (j = 0; j < wierzcholki; j++)
+						if (j != korzen && macierzIncydencji[j][l] == -1 && !odwiedzone[j] && (koszta[j] > koszta[korzen] + K[l].waga))
+						{
+							koszta[j] = koszta[korzen] + K[l].waga;
+							poprzednicy[j] = korzen;
+
+							for (syn = pozycjaKopiec[j]; syn; syn = ojciec)
+							{
+								ojciec = syn / 2;
+								if (koszta[kopiec[ojciec]] <= koszta[kopiec[syn]])
+									break;
+								wezel = kopiec[ojciec];
+								kopiec[ojciec] = kopiec[syn];
+								kopiec[syn] = wezel;
+								pozycjaKopiec[kopiec[ojciec]] = ojciec;
+								pozycjaKopiec[kopiec[syn]] = syn;
+							}
+						}
+			}
+		}
+		pobierzCzas();
+		cout << endl;
+
+		cout << "Najkrotsza droga z wierzcholka nr " << w << " do wierzcholka nr: " << t << endl;
+		string displayText = "";
+		string temp = "";
+		int minCost = MAXINT;
+
+		for (i = 0; i < wierzcholki; i++)
+		{
+			szerokosc = -2;
+
+			if (koszta[t] == MAXINT || koszta[t]<0)
+				cout << "Brak sciezki" << endl;
+			else
+
+			{
+				for (j = i; j > -1; j = poprzednicy[j])
+				{
+					stos.push(j);
+					szerokosc = szerokosc + 2;
+				}
+
+				int koncowyWierzcholek;
+				while (!stos.empty())
+				{
+					koncowyWierzcholek = stos.top();
+					temp += to_string(stos.top()) + " ";
+					stos.pop();
+				}
+				for (j = 0; j < wierzcholki - szerokosc; j++)
+					temp += " waga sciezki";
+				temp += "(" + to_string(koszta[i]);
+				temp += ")";
+
+				if (koncowyWierzcholek == t) {
+					displayText = temp;
+				}
+				temp = "";
+			}
+		}
+
+		cout << displayText;
+		cout << endl << endl;
+	}
+
 	void kruskalLista()/////////////
 	{
 		int w, i;
@@ -818,7 +1082,7 @@ public:
 		{
 			odwiedzone[i] = false;
 		}
-		cout << endl << "Graf nieskierowany na podstawie ktorego zbudowano drzewo: " << endl << endl;
+		cout << endl << "Graf nieskierowany poczatkowy: " << endl << endl;
 		for (i = 0; i < wierzcholki; i++)
 		{
 			cout << "LS[" << i << "] =";
@@ -863,7 +1127,7 @@ public:
 
 		pobierzCzas();
 		cout << endl;
-		cout << "MST:";
+		cout << "Minimalne drzewo rozpinajace:";
 		drzewo->wyswietl();
 		delete drzewo;
 	}
@@ -880,7 +1144,7 @@ public:
 			odwiedzone[i] = false;
 		}
 
-		cout << "Graf nieskierowany na podstawie ktorego budowano drzewo: " << endl << endl;
+		cout << "Graf nieskierowany na poczatkowy: " << endl << endl;
 		cout << "   ";
 		for (i = 0; i < krawedzieOdwrotne; i++)
 		{
@@ -938,7 +1202,7 @@ public:
 		
 		pobierzCzas();
 		cout << endl << endl;
-		cout << "MST:";
+		cout << "Minimalne drzewo rozpinajace:";
 		drzewo->wyswietl();
 		delete drzewo;
 	}
@@ -951,7 +1215,7 @@ public:
 		DrzewoSpinajace *drzewo = new DrzewoSpinajace(wierzcholki, krawedzie);
 		set<int> odwiedzone = set<int>();
 		
-		cout << endl << "Graf nieskierowany na podstawie ktorego zbudowano drzewo: " << endl << endl;
+		cout << endl << "Graf nieskierowany poczatkowy: " << endl << endl;
 		for (i = 0; i < wierzcholki; i++)
 		{
 			cout << "LS[" << i << "] =";
@@ -994,7 +1258,7 @@ public:
 
 		pobierzCzas();
 		cout << endl;
-		cout << "MST:";
+		cout << "Minimalne drzewo rozpinajace:";
 		drzewo->wyswietl();
 		delete drzewo;
 	}
@@ -1007,7 +1271,7 @@ public:
 		DrzewoSpinajace *drzewo = new DrzewoSpinajace(wierzcholki, krawedzie);
 		set<int> odwiedzone = set<int>();
 
-		cout << "Graf nieskierowany na podstawie ktorego budowano drzewo: " << endl << endl;
+		cout << "Graf nieskierowany poczatkowy: " << endl << endl;
 		cout << "   ";
 		for (i = 0; i < krawedzieOdwrotne; i++)
 		{
@@ -1065,7 +1329,7 @@ public:
 		
 		pobierzCzas();
 		cout << endl << endl;
-		cout << "MST:";
+		cout << "Minimalne drzewo rozpinajace:";
 		drzewo->wyswietl();
 		delete drzewo;
 	}
@@ -1142,12 +1406,12 @@ public:
 int main()
 {
 	srand(time(NULL));
-	int wybor, w, g, b;
+	int wybor, w, g, b, o;
 	Graf *graf;
 	bool naPoczatek = true;
 	while (naPoczatek)
 	{
-		cout << "Stworz graf" << endl << "1. Wczytaj z pliku" << endl << "2. Wylosuj graf" << endl;
+		cout << "Stworz graf" << endl << "1. Wczytaj z pliku" << endl << "2. Wygeneruj graf losowo" << endl;
 		cin >> wybor;
 		system("cls");
 		switch (wybor)
@@ -1159,7 +1423,7 @@ int main()
 			string s, nazwa;
 			int a = 0;
 			int krawedzie, wierzcholki;
-			cout << "Podaj nazwe pliku do wczytania grafu" << endl;
+			cout << "Podaj nazwe pliku" << endl;
 			cin >> nazwa;
 			nazwa = nazwa + ".txt";
 			ifstream plik(nazwa);
@@ -1177,7 +1441,7 @@ int main()
 					plik >> krawedzie >> wierzcholki;
 					if (!plik || krawedzie < wierzcholki - 1 || wierzcholki <= 1 || krawedzie >(wierzcholki*(wierzcholki - 1)))
 					{
-						cout << "Cos nie tak!" << endl << "Liczba wierzcholkow lub krawedzi nie jest prawidlowa." << endl;
+						cout << "Liczba wierzcholkow lub krawedzi jest nieprawidlowa" << endl;
 
 						naPoczatek = true;
 					}
@@ -1191,7 +1455,7 @@ int main()
 							plik >> graf->K[a].wp >> graf->K[a].wk >> graf->K[a].waga;
 							if (graf->K[a].wp >= wierzcholki || graf->K[a].wk >= wierzcholki || graf->K[a].waga < 1)
 							{
-								cout << "Cos nie tak! Zle podane krawedzie!" << endl;
+								cout << "Zle podane krawedzie" << endl;
 								naPoczatek = true;
 								break;
 							}
@@ -1200,7 +1464,7 @@ int main()
 
 							else
 							{
-								cout << "Cos nie tak! Zle podane krawedzie!" << endl;
+								cout << "Zle podane krawedzie" << endl;
 								naPoczatek = true;
 								break;
 							}
@@ -1234,7 +1498,7 @@ int main()
 							graf->grafNieskierowany();
 							if (!(graf->czySpojny()))
 							{
-								cout << "Graf, zbudowany z pliku jest niespojny, " << endl << "nie mozna kontynuowac!" << endl;
+								cout << "Graf, zbudowany z pliku jest niespojny" << endl;
 								naPoczatek = true;
 								delete graf;
 							}
@@ -1242,8 +1506,19 @@ int main()
 								system("cls");
 							while (!naPoczatek)
 							{
-								cout << "Graf " << endl << "Wierzcholki: " << graf->getWierzcholki() << endl << "Krawedzie: " << graf->getKrawedzie() << endl
-									<< "1. Wyswietl" << endl << "2. DFS - macierz incydencji " << endl << "3. DFS - listy sasiedztwa" << endl << "4. Dijkstra - macierz incydencji" << endl << "5. Dijkstra - listy sasiedztwa" << endl << "6. Kruskal - macierz incydencji " << endl << "7. Kruskal - listy sasiedztwa" << endl << "8. Wroc do tworzenia grafu" << endl << "9. Prim - macierz incydencji" << endl << "10. Prim - listy sasiedztwa" << endl;
+								cout << "Graf " << endl
+									 << "Wierzcholki: " << graf->getWierzcholki() << endl
+									 << "Krawedzie: " << graf->getKrawedzie() << endl
+									 << "1. Wyswietl" << endl
+									 << "2. Forda-Bellmana - macierz incydencji " << endl
+									 << "3. Forda-Bellmana - listy sasiedztwa" << endl
+									 << "4. Dijkstra - macierz incydencji" << endl 
+									 << "5. Dijkstra - listy sasiedztwa" << endl 
+									 << "6. Kruskal - macierz incydencji " << endl 
+									 << "7. Kruskal - listy sasiedztwa" << endl 
+									 << "8. Wroc do tworzenia grafu" << endl 
+									 << "9. Prim - macierz incydencji" << endl 
+									 << "10. Prim - listy sasiedztwa" << endl;
 								cin >> wybor;
 								switch (wybor)
 								{
@@ -1255,51 +1530,98 @@ int main()
 								{
 									while (true)
 									{
-										cout << "Od ktorego wierzcholka chcesz przejsc graf?" << endl;
+										cout << "Podaj numer wierzcholka startowego" << endl;
 										cin >> b;
-										if (b < graf->getWierzcholki()) break;
-										else cout << "Podaj prawidlowy numer wierzcholka!" << endl;
+										cout << "Podaj numer wierzcholka koncowego" << endl;
+										cin >> o;
+
+										if (b < graf->getWierzcholki() && o < graf->getWierzcholki()) {
+											break;
+										}
+
+										if (b >= graf->getWierzcholki()) {
+											cout << "Podaj prawidlowy numer wierzcholka startowego" << endl;
+										}
+
+										if (o >= graf->getWierzcholki()) {
+											cout << "Podaj prawidlowy numer wierzcholka koncowego" << endl;
+										}
 									}
 									cout << endl;
-									graf->DFSMacierz(b);
+									graf->FordaBellmanaMacierz(b, o);
 
-									cout << endl;
 								}break;
 								case 3:
 								{
 									while (true)
 									{
-										cout << "Od ktorego wierzcholka chcesz przejsc graf?" << endl;
+										cout << "Podaj numer wierzcholka startowego" << endl;
 										cin >> b;
-										if (b < graf->getWierzcholki()) break;
-										else cout << "Podaj prawidlowy numer wierzcholka!" << endl;
+										cout << "Podaj numer wierzcholka koncowego" << endl;
+										cin >> o;
+
+										if (b < graf->getWierzcholki() && o < graf->getWierzcholki()) {
+											break;
+										}
+
+										if (b >= graf->getWierzcholki()) {
+											cout << "Podaj prawidlowy numer wierzcholka startowego" << endl;
+										}
+
+										if (o >= graf->getWierzcholki()) {
+											cout << "Podaj prawidlowy numer wierzcholka koncowego" << endl;
+										}
 									}
 									cout << endl;
-									graf->DFSLista(b);
-									cout << endl;
+									graf->FordaBellmanaLista(b, o);
+
 								}break;
 								case 4: {
 									while (true)
 									{
-										cout << "Z ktorego wierzcholka szukac najkrotszych sciezek?" << endl;
+										cout << "Podaj numer wierzcholka startowego" << endl;
 										cin >> b;
-										if (b < graf->getWierzcholki()) break;
-										else cout << "Podaj prawidlowy numer wierzcholka!" << endl;
+										cout << "Podaj numer wierzcholka koncowego" << endl;
+										cin >> o;
+
+										if (b < graf->getWierzcholki() && o < graf->getWierzcholki()) {
+											break;
+										}
+
+										if (b >= graf->getWierzcholki()) {
+											cout << "Podaj prawidlowy numer wierzcholka startowego" << endl;
+										}
+
+										if (o >= graf->getWierzcholki()) {
+											cout << "Podaj prawidlowy numer wierzcholka koncowego" << endl;
+										}
 									}
 									cout << endl;
-									graf->DijkstraMacierz(b);
+									graf->DijkstraMacierz(b, o);
 
 								}break;
 								case 5: {
 									while (true)
 									{
-										cout << "Z ktorego wierzcholka szukac najkrotszych sciezek?" << endl;
+										cout << "Podaj numer wierzcholka startowego" << endl;
 										cin >> b;
-										if (b < graf->getWierzcholki()) break;
-										else cout << "Podaj prawidlowy numer wierzcholka!" << endl;
+										cout << "Podaj numer wierzcholka koncowego" << endl;
+										cin >> o;
+
+										if (b < graf->getWierzcholki() && o < graf->getWierzcholki()) {
+											break;
+										}
+
+										if (b >= graf->getWierzcholki()) {
+											cout << "Podaj prawidlowy numer wierzcholka startowego" << endl;
+										}
+
+										if (o >= graf->getWierzcholki()) {
+											cout << "Podaj prawidlowy numer wierzcholka koncowego" << endl;
+										}
 									}
 									cout << endl;
-									graf->DijkstraLista(b);
+									graf->DijkstraLista(b, o);
 
 								}break;
 								case 6: {
@@ -1330,7 +1652,7 @@ int main()
 						else if (naPoczatek == false)
 						{
 							naPoczatek = true;
-							cout << "Cos nie tak!  Za malo danych w stosunku do podanych krawedzi!" << endl;
+							cout << "Za malo danych w stosunku do podanych krawedzi" << endl;
 						}
 					}
 				}
@@ -1343,19 +1665,19 @@ int main()
 				cout << "Podaj liczbe wierzcholkow" << endl;
 				cin >> w;
 				if (w > 1) break;
-				else cout << "Liczba wierzcholkow musi byc wieksza od 1!" << endl;
+				else
+					cout << "Liczba wierzcholkow musi byc wieksza od 1" << endl;
 			}
-
-
+			
 			int maxK = w*(w - 1);
 			double minG = ceil((((double)w - 1) * 100) / (double)maxK);
 
 			while (true)
 			{
 
-				cout << "Podaj gestosc - co najmniej " << minG << " %" << endl;
+				cout << "Podaj gestosc (minimum " << minG << " %" << ")" << endl;
 				cin >> g;
-				if (g < minG || g > 100) cout << "Podaj prawidlowa wartosc w %!"
+				if (g < minG || g > 100) cout << "Podaj prawidlowa wartosc"
 					<< endl << "Aby graf byl spojny, gestosc musi wynosic przynajmniej " << minG << " %" << endl;
 				else
 					break;
@@ -1368,8 +1690,20 @@ int main()
 			while (!naPoczatek)
 			{
 
-				cout << "Graf " << endl << "Wierzcholki: " << graf->getWierzcholki() << endl << "Krawedzie: " << graf->getKrawedzie() << endl << "Gestosc: " << g << endl
-					<< "1. Wyswietl" << endl << "2. DFS - macierz incydencji " << endl << "3. DFS - listy sasiedztwa" << endl << "4. Dijkstra - macierz incydencji" << endl << "5. Dijkstra - listy sasiedztwa" << endl << "6. Kruskal - macierz incydencji" << endl << "7. Kruskal - listy sasiedztwa" << endl << "8. Wroc do tworzenia grafu" << endl << "9. Prim - macierz incydencji" << endl << "10. Prim - listy sasiedztwa" << endl;
+				cout << "Graf " << endl 
+					<< "Wierzcholki: " << graf->getWierzcholki() << endl 
+					<< "Krawedzie: " << graf->getKrawedzie() << endl 
+					<< "Gestosc: " << g << endl
+					<< "1. Wyswietl" << endl 
+					<< "2. Forda-Bellmana - macierz incydencji " << endl 
+					<< "3. Forda-Bellmana - listy sasiedztwa" << endl 
+					<< "4. Dijkstra - macierz incydencji" << endl 
+					<< "5. Dijkstra - listy sasiedztwa" << endl 
+					<< "6. Kruskal - macierz incydencji" << endl 
+					<< "7. Kruskal - listy sasiedztwa" << endl 
+					<< "8. Wroc do tworzenia grafu" << endl 
+					<< "9. Prim - macierz incydencji" << endl 
+					<< "10. Prim - listy sasiedztwa" << endl;
 				cin >> wybor;
 				switch (wybor)
 				{
@@ -1382,50 +1716,98 @@ int main()
 				{
 					while (true)
 					{
-						cout << "Od ktorego wierzcholka chcesz przejsc graf?" << endl;
+						cout << "Podaj numer wierzcholka startowego" << endl;
 						cin >> b;
-						if (b < graf->getWierzcholki()) break;
-						else cout << "Podaj prawidlowy numer wierzcholka!" << endl;
+						cout << "Podaj numer wierzcholka koncowego" << endl;
+						cin >> o;
+
+						if (b < graf->getWierzcholki() && o < graf->getWierzcholki()) {
+							break;
+						}
+
+						if (b >= graf->getWierzcholki()) {
+							cout << "Podaj prawidlowy numer wierzcholka startowego" << endl;
+						}
+
+						if (o >= graf->getWierzcholki()) {
+							cout << "Podaj prawidlowy numer wierzcholka koncowego" << endl;
+						}
 					}
 					cout << endl;
-					graf->DFSMacierz(b);
-					cout << endl;
+					graf->FordaBellmanaMacierz(b, o);
 				}break;
 				case 3:
 				{
 					while (true)
 					{
-						cout << "Od ktorego wierzcholka chcesz przejsc graf?" << endl;
+						cout << "Podaj numer wierzcholka startowego" << endl;
+
 						cin >> b;
-						if (b < graf->getWierzcholki()) break;
-						else cout << "Podaj prawidlowy numer wierzcholka!" << endl;
+						cout << "Podaj numer wierzcholka koncowego" << endl;
+						cin >> o;
+
+						if (b < graf->getWierzcholki() && o < graf->getWierzcholki()) {
+							break;
+						}
+
+						if (b >= graf->getWierzcholki()) {
+							cout << "Podaj prawidlowy numer wierzcholka startowego" << endl;
+						}
+
+						if (o >= graf->getWierzcholki()) {
+							cout << "Podaj prawidlowy numer wierzcholka koncowego" << endl;
+						}
 					}
 					cout << endl;
-					graf->DFSLista(b);
-					cout << endl;
+					graf->FordaBellmanaLista(b, o);
 				}break;
 				case 4: {
 					while (true)
 					{
-						cout << "Z ktorego wierzcholka szukac najkrotszych sciezek?" << endl;
+						cout << "Podaj numer wierzcholka startowego" << endl;
 						cin >> b;
-						if (b < graf->getWierzcholki()) break;
-						else cout << "Podaj prawidlowy numer wierzcholka!" << endl;
+						cout << "Podaj numer wierzcholka koncowego" << endl;
+						cin >> o;
+
+						if (b < graf->getWierzcholki() && o < graf->getWierzcholki()) {
+							break;
+						}
+
+						if (b >= graf->getWierzcholki()) {
+							cout << "Podaj prawidlowy numer wierzcholka startowego" << endl;
+						}
+
+						if (o >= graf->getWierzcholki()) {
+							cout << "Podaj prawidlowy numer wierzcholka koncowego" << endl;
+						}
 					}
 					cout << endl;
-					graf->DijkstraMacierz(b);
+					graf->DijkstraMacierz(b, o);
 
 				}break;
 				case 5: {
 					while (true)
 					{
-						cout << "Z ktorego wierzcholka szukac najkrotszych sciezek?" << endl;
+						cout << "Podaj numer wierzcholka startowego" << endl;
+
 						cin >> b;
-						if (b < graf->getWierzcholki()) break;
-						else cout << "Podaj prawidlowy numer wierzcholka!" << endl;
+						cout << "Podaj numer wierzcholka koncowego" << endl;
+						cin >> o;
+
+						if (b < graf->getWierzcholki() && o < graf->getWierzcholki()) {
+							break;
+						}
+
+						if (b >= graf->getWierzcholki()) {
+							cout << "Podaj prawidlowy numer wierzcholka startowego" << endl;
+						}
+
+						if (o >= graf->getWierzcholki()) {
+							cout << "Podaj prawidlowy numer wierzcholka koncowego" << endl;
+						}
 					}
 					cout << endl;
-					graf->DijkstraLista(b);
+					graf->DijkstraLista(b, o);
 
 				}break;
 				case 6: {
