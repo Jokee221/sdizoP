@@ -483,6 +483,7 @@ public:
 		cout << endl << "Graf skierowany poczatkowy: " << endl << endl;
 		for (i = 0; i < wierzcholki; i++)
 		{
+			break;/////////
 			cout << "LS[" << i << "] =";
 			e1 = listySasiedztwa[i];
 			while (e1)
@@ -630,12 +631,14 @@ public:
 		cout << "   ";
 		for (i = 0; i < krawedzieOdwrotne; i++)
 		{
+			break;//////////
 			cout << setw(3) << i;
 
 		}
 		cout << endl << endl;
 		for (i = 0; i < wierzcholki; i++)
 		{
+			break;/////////
 			cout << setw(3) << i;
 			for (int j = 0; j < krawedzieOdwrotne; j++)
 				cout << setw(3) << macierzIncydencji[i][j];
@@ -645,6 +648,7 @@ public:
 		cout << "   ";
 		for (i = 0; i < krawedzieOdwrotne; i++)
 		{
+			break;/////////
 			cout << setw(3) << KO[i].waga;
 		}
 		cout << " " << "<- wagi";
@@ -777,16 +781,18 @@ public:
 		poprzednicy = new int[wierzcholki];
 		odwiedzone = new bool[wierzcholki];
 		kopiec = new int[wierzcholki];
+		int n = 61;
 		pozycjaKopiec = new int[wierzcholki];
 
 		odwiedzone = new bool[wierzcholki];
-		//for (i = 0; i < wierzcholki; i++)
-		//{
-		//	odwiedzone[i] = false;
-		//}
+		for (i = 0; i < wierzcholki; i++)
+		{
+			odwiedzone[i] = false;
+		}
 		cout << endl << "Graf skierowany poczatkowy: " << endl << endl;
 		for (i = 0; i < wierzcholki; i++)
 		{
+			break;////////
 			cout << "LS[" << i << "] =";
 			e1 = listySasiedztwa[i];
 			while (e1)
@@ -806,7 +812,7 @@ public:
 			kopiec[i] = pozycjaKopiec[i] = i;
 		}
 		czasStart();
-		for (int k = 1; k < 60; k++) {
+		for (int k = 1; k < (n-1); k++) {
 			rozmiarKopca = wierzcholki;
 
 			koszta[w] = 0;
@@ -921,6 +927,7 @@ public:
 		poprzednicy = new int[wierzcholki];
 		odwiedzone = new bool[wierzcholki];
 		kopiec = new int[wierzcholki];
+		int n = 61;
 		pozycjaKopiec = new int[wierzcholki];
 
 		odwiedzone = new bool[wierzcholki];
@@ -933,12 +940,14 @@ public:
 		cout << "   ";
 		for (i = 0; i < krawedzieOdwrotne; i++)
 		{
+			break;/////////
 			cout << setw(3) << i;
 
 		}
 		cout << endl << endl;
 		for (i = 0; i < wierzcholki; i++)
 		{
+			break;//////////
 			cout << setw(3) << i;
 			for (int j = 0; j < krawedzieOdwrotne; j++)
 				cout << setw(3) << macierzIncydencji[i][j];
@@ -948,6 +957,7 @@ public:
 		cout << "   ";
 		for (i = 0; i < krawedzieOdwrotne; i++)
 		{
+			break;//////////////
 			cout << setw(3) << KO[i].waga;
 		}
 		cout << " " << "<- wagi";
@@ -963,66 +973,68 @@ public:
 
 
 		czasStart();
-		rozmiarKopca = wierzcholki;
+		for (int k = 1; k < (n-1); k++) {
+			rozmiarKopca = wierzcholki;
 
-		koszta[w] = 0;
-		wezel = kopiec[0];
-		kopiec[0] = kopiec[w];
-		kopiec[w] = wezel;
-		pozycjaKopiec[w] = 0;
-		pozycjaKopiec[0] = w;
+			koszta[w] = 0;
+			wezel = kopiec[0];
+			kopiec[0] = kopiec[w];
+			kopiec[w] = wezel;
+			pozycjaKopiec[w] = 0;
+			pozycjaKopiec[0] = w;
 
-		for (i = 0; i < wierzcholki; i++)
-		{
-			korzen = kopiec[0];
-
-			kopiec[0] = kopiec[--rozmiarKopca];
-			pozycjaKopiec[kopiec[0]] = ojciec = 0;
-			while (true)
+			for (i = 0; i < wierzcholki; i++)
 			{
-				lewySyn = ojciec + ojciec + 1;
-				prawySyn = lewySyn + 1;
-				if (lewySyn >= rozmiarKopca) break;
-				kosztMin = koszta[kopiec[lewySyn]];
-				synMin = lewySyn;
-				if ((prawySyn < rozmiarKopca) && (kosztMin > koszta[kopiec[prawySyn]]))
+				korzen = kopiec[0];
+
+				kopiec[0] = kopiec[--rozmiarKopca];
+				pozycjaKopiec[kopiec[0]] = ojciec = 0;
+				while (true)
 				{
-					kosztMin = koszta[kopiec[prawySyn]];
-					synMin = prawySyn;
+					lewySyn = ojciec + ojciec + 1;
+					prawySyn = lewySyn + 1;
+					if (lewySyn >= rozmiarKopca) break;
+					kosztMin = koszta[kopiec[lewySyn]];
+					synMin = lewySyn;
+					if ((prawySyn < rozmiarKopca) && (kosztMin > koszta[kopiec[prawySyn]]))
+					{
+						kosztMin = koszta[kopiec[prawySyn]];
+						synMin = prawySyn;
+					}
+					if (koszta[kopiec[ojciec]] <= kosztMin)
+						break;
+					wezel = kopiec[ojciec];
+					kopiec[ojciec] = kopiec[synMin];
+					kopiec[synMin] = wezel;
+					pozycjaKopiec[kopiec[ojciec]] = ojciec;
+					pozycjaKopiec[kopiec[synMin]] = synMin;
+					ojciec = synMin;
 				}
-				if (koszta[kopiec[ojciec]] <= kosztMin)
-					break;
-				wezel = kopiec[ojciec];
-				kopiec[ojciec] = kopiec[synMin];
-				kopiec[synMin] = wezel;
-				pozycjaKopiec[kopiec[ojciec]] = ojciec;
-				pozycjaKopiec[kopiec[synMin]] = synMin;
-				ojciec = synMin;
-			}
 
-			odwiedzone[korzen] = true;
+				odwiedzone[korzen] = true;
 
-			for (l = 0; l < krawedzie; l++)
-			{
-				if (macierzIncydencji[korzen][l] != 0)
-					for (j = 0; j < wierzcholki; j++)
-						if (j != korzen && macierzIncydencji[j][l] == -1 && !odwiedzone[j] && (koszta[j] > koszta[korzen] + K[l].waga))
-						{
-							koszta[j] = koszta[korzen] + K[l].waga;
-							poprzednicy[j] = korzen;
-
-							for (syn = pozycjaKopiec[j]; syn; syn = ojciec)
+				for (l = 0; l < krawedzie; l++)
+				{
+					if (macierzIncydencji[korzen][l] != 0)
+						for (j = 0; j < wierzcholki; j++)
+							if (j != korzen && macierzIncydencji[j][l] == -1 && !odwiedzone[j] && (koszta[j] > koszta[korzen] + K[l].waga))
 							{
-								ojciec = syn / 2;
-								if (koszta[kopiec[ojciec]] <= koszta[kopiec[syn]])
-									break;
-								wezel = kopiec[ojciec];
-								kopiec[ojciec] = kopiec[syn];
-								kopiec[syn] = wezel;
-								pozycjaKopiec[kopiec[ojciec]] = ojciec;
-								pozycjaKopiec[kopiec[syn]] = syn;
+								koszta[j] = koszta[korzen] + K[l].waga;
+								poprzednicy[j] = korzen;
+
+								for (syn = pozycjaKopiec[j]; syn; syn = ojciec)
+								{
+									ojciec = syn / 2;
+									if (koszta[kopiec[ojciec]] <= koszta[kopiec[syn]])
+										break;
+									wezel = kopiec[ojciec];
+									kopiec[ojciec] = kopiec[syn];
+									kopiec[syn] = wezel;
+									pozycjaKopiec[kopiec[ojciec]] = ojciec;
+									pozycjaKopiec[kopiec[syn]] = syn;
+								}
 							}
-						}
+				}
 			}
 		}
 		pobierzCzas();
@@ -1055,7 +1067,7 @@ public:
 					temp += to_string(stos.top()) + " ";
 					stos.pop();
 				}
-				for (j = 0; j < wierzcholki - szerokosc; j++)
+				//for (j = 0; j < wierzcholki - szerokosc; j++)
 					temp += " waga sciezki";
 				temp += "(" + to_string(koszta[i]);
 				temp += ")";
@@ -1085,6 +1097,7 @@ public:
 		cout << endl << "Graf nieskierowany poczatkowy: " << endl << endl;
 		for (i = 0; i < wierzcholki; i++)
 		{
+			break;//////////
 			cout << "LS[" << i << "] =";
 			e1 = grafNieskierowanyL[i];
 			while (e1)
@@ -1148,12 +1161,13 @@ public:
 		cout << "   ";
 		for (i = 0; i < krawedzieOdwrotne; i++)
 		{
+			break;///////////
 			cout << setw(3) << i;
-
 		}
 		cout << endl << endl;
 		for (i = 0; i < wierzcholki; i++)
 		{
+			break;/////////
 			cout << setw(3) << i;
 			for (int j = 0; j < krawedzieOdwrotne; j++)
 				cout << setw(3) << grafNieskierowanyM[i][j];
@@ -1163,6 +1177,7 @@ public:
 		cout << "   ";
 		for (i = 0; i < krawedzieOdwrotne; i++)
 		{
+			break;/////////
 			cout << setw(3) << KO[i].waga;
 		}
 		cout << " " << "<- wagi";
@@ -1211,13 +1226,14 @@ public:
 	{
 		int w, i;
 		Krawedz k;
-		vector <Krawedz> kolejka;
+		vector <Krawedz> wektor;
 		DrzewoSpinajace *drzewo = new DrzewoSpinajace(wierzcholki, krawedzie);
 		set<int> odwiedzone = set<int>();
 		
 		cout << endl << "Graf nieskierowany poczatkowy: " << endl << endl;
 		for (i = 0; i < wierzcholki; i++)
 		{
+			break;////////
 			cout << "LS[" << i << "] =";
 			e1 = grafNieskierowanyL[i];
 			while (e1)
@@ -1239,14 +1255,14 @@ public:
 					k.wp = w;
 					k.wk = e1->w;
 					k.waga = e1->waga;
-					kolejka.push_back(k);
+					wektor.push_back(k);
 			}
 			
 			//drzewo->dodajKrawedz(k);
 			if (w == 0)
-				odwiedzone.insert(minimalnyWierzcholek(kolejka).wp);
+				odwiedzone.insert(minimalnyWierzcholek(wektor).wp);
 			
-			Krawedz krawedz = znajdzMinimum(odwiedzone, kolejka);
+			Krawedz krawedz = znajdzMinimum(odwiedzone, wektor);
 			odwiedzone.insert(krawedz.wp);
 			odwiedzone.insert(krawedz.wk);
 			drzewo->dodajKrawedz(krawedz);
@@ -1267,7 +1283,7 @@ public:
 	{
 		int w, i, j, g;
 		Krawedz krawedz;
-		vector <Krawedz> kolejka;
+		vector <Krawedz> wektor;
 		DrzewoSpinajace *drzewo = new DrzewoSpinajace(wierzcholki, krawedzie);
 		set<int> odwiedzone = set<int>();
 
@@ -1275,12 +1291,14 @@ public:
 		cout << "   ";
 		for (i = 0; i < krawedzieOdwrotne; i++)
 		{
+			break;///////
 			cout << setw(3) << i;
 
 		}
 		cout << endl << endl;
 		for (i = 0; i < wierzcholki; i++)
 		{
+			break;//////////
 			cout << setw(3) << i;
 			for (int j = 0; j < krawedzieOdwrotne; j++)
 				cout << setw(3) << grafNieskierowanyM[i][j];
@@ -1290,6 +1308,7 @@ public:
 		cout << "   ";
 		for (i = 0; i < krawedzieOdwrotne; i++)
 		{
+			break;///////////
 			cout << setw(3) << KO[i].waga;
 		}
 		cout << " " << "<- wagi";
@@ -1309,17 +1328,17 @@ public:
 							krawedz.wp = w;
 							krawedz.wk = j;
 							krawedz.waga = KO[g].waga;
-							kolejka.push_back(krawedz);
+							wektor.push_back(krawedz);
 
 						}
 			}
 
 			if(w == 0)
-				odwiedzone.insert(minimalnyWierzcholek(kolejka).wp);
+				odwiedzone.insert(minimalnyWierzcholek(wektor).wp);
 
 			/*for (i = 0; i < wierzcholki; i++)
 			{*/
-				Krawedz krawedz = znajdzMinimum(odwiedzone, kolejka);
+				Krawedz krawedz = znajdzMinimum(odwiedzone, wektor);
 				odwiedzone.insert(krawedz.wp);
 				odwiedzone.insert(krawedz.wk);
 				drzewo->dodajKrawedz(krawedz);

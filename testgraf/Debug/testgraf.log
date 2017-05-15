@@ -1,6 +1,6 @@
 ﻿  main.cpp
-c:\users\jokee221\documents\visual studio 2015\projects\testgraf\testgraf\main.cpp(1408): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-c:\users\jokee221\documents\visual studio 2015\projects\testgraf\testgraf\main.cpp(1686): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-c:\users\jokee221\documents\visual studio 2015\projects\testgraf\testgraf\main.cpp(1364): warning C4172: returning address of local variable or temporary: krawedzMinimalna
+c:\users\jokee221\documents\visual studio 2015\projects\testgraf\testgraf\main.cpp(1427): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\jokee221\documents\visual studio 2015\projects\testgraf\testgraf\main.cpp(1705): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+c:\users\jokee221\documents\visual studio 2015\projects\testgraf\testgraf\main.cpp(1383): warning C4172: returning address of local variable or temporary: krawedzMinimalna
   testgraf.vcxproj -> C:\Users\Jokee221\documents\visual studio 2015\Projects\testgraf\Debug\testgraf.exe
   testgraf.vcxproj -> C:\Users\Jokee221\documents\visual studio 2015\Projects\testgraf\Debug\testgraf.pdb (Full PDB)
